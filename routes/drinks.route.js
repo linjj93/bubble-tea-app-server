@@ -1,9 +1,11 @@
 require("../models/drink.model");
+require("../models/user.model");
 const Joi = require("@hapi/joi");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const DrinkModel = mongoose.model("drink");
+const UserModel = mongoose.model("user");
 
 validateDrink = drink => {
   const schema = {
@@ -11,7 +13,7 @@ validateDrink = drink => {
       .integer()
       .required(),
     name: Joi.string().required(),
-    topping: Joi.array().items(Joi.string()),
+    toppings: Joi.array().items(Joi.string()),
     price: Joi.number().required(),
     sugarLevel: Joi.number().required(),
     store: Joi.string().required(),
@@ -21,7 +23,9 @@ validateDrink = drink => {
 };
 
 router.get("/", async (req, res, next) => {
-  const drinks = await DrinkModel.find().catch(err => next(err));
+  const drinks = await DrinkModel.find({ _drinker: req.user._id }).catch(err =>
+    next(err)
+  );
   res.status(200).json(drinks);
 });
 
@@ -33,7 +37,7 @@ router.post("/", async (req, res, next) => {
     return next(err);
   }
   try {
-    const newDrink = new DrinkModel(req.body);
+    const newDrink = new DrinkModel({ ...req.body, _drinker: req.user._id });
     await newDrink.save();
     res.status(201).json(newDrink);
   } catch (err) {
