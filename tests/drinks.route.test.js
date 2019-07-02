@@ -76,14 +76,14 @@ describe("drinks", () => {
         .post("/drinks")
         .send(mockDrink)
         .set("Content-Type", "application/json");
+      expect(response.status).toEqual(201);
       expect(response.body).toMatchObject(mockDrink);
       const foundDrink = await collection.findOne({ id: 6 });
       expect(foundDrink.price).toEqual(3.0);
       expect(foundDrink.store).toEqual("Woobbee");
     });
 
-    it.only("POST /drinks should return 400 if it is missing a field", async () => {
-      const collection = db.collection("drinks");
+    it("POST /drinks should return 400 if it is missing a field", async () => {
       const response = await request(app)
         .post("/drinks")
         .send(DrinkWithoutPrice)
@@ -97,6 +97,47 @@ describe("drinks", () => {
         .set("Content-Type", "application/json");
       expect(response2.status).toEqual(400);
       expect(response2.body).toEqual({ message: '"dateBought" is required' });
+    });
+  });
+
+  describe("/drinks/:id", () => {
+    it("PUT /drinks/1 should edit the details of the first drink", async () => {
+      const fieldsToUpdate = {
+        topping: ["White Pearl", "Pudding"],
+        price: 3.8,
+        sugarLevel: 70
+      };
+      const collection = db.collection("drinks");
+      await collection.insertMany(mockData);
+
+      const response = await request(app)
+        .put("/drinks/1")
+        .send(fieldsToUpdate)
+        .set("Content-Type", "application/json");
+
+      const updatedDrink = await collection.findOne({ id: 1 });
+      expect(response.status).toEqual(200);
+      expect(response.body).toMatchObject(updatedDrink);
+      expect(updatedDrink.price).toEqual(3.8);
+      expect(updatedDrink.sugarLevel).toEqual(70);
+    });
+
+    it("PUT /drinks/10 should return 404 because there is no drink with id 10", async () => {
+      const fieldsToUpdate = {
+        topping: ["White Pearl", "Pudding"],
+        price: 3.8,
+        sugarLevel: 70
+      };
+      const collection = db.collection("drinks");
+      await collection.insertMany(mockData);
+
+      const response = await request(app)
+        .put("/drinks/10")
+        .send(fieldsToUpdate)
+        .set("Content-Type", "application/json");
+
+      expect(response.status).toEqual(400);
+      expect(response.body).toEqual("Drink with id 10 does not exist");
     });
   });
 });
