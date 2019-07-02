@@ -35,7 +35,7 @@ router.post("/", async (req, res, next) => {
   try {
     const newDrink = new DrinkModel(req.body);
     await newDrink.save();
-    res.status(200).json(newDrink);
+    res.status(201).json(newDrink);
   } catch (err) {
     next(err);
   }
@@ -54,7 +54,11 @@ router.delete("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    await DrinkModel.findOneAndUpdate({ id }, req.body);
+    const drinkToUpdate = await DrinkModel.findOneAndUpdate({ id }, req.body);
+
+    if (drinkToUpdate === null) {
+      res.status(400).json(`Drink with id ${id} does not exist`);
+    }
     const updatedDrink = await DrinkModel.findOne({ id });
     res.status(200).json(updatedDrink);
   } catch (err) {
