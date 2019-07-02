@@ -12,8 +12,8 @@ app.use((err, req, res, next) => {
   if (err.statusCode) {
     res.status(err.statusCode).json({ message: err.message });
   }
-  console.log("error", err);
-  res.sendStatus(500);
+  // console.log("error", err);
+  res.sendStatus(500).json({ message: err.message });
 });
 
 module.exports = app;
