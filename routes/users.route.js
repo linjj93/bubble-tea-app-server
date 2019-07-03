@@ -132,6 +132,11 @@ router.delete(
       const user = await UserModel.findOne({ username });
       const drinks = user.drinks;
       const drinkToDelete = drinks.find(drink => drink._id.toString() === id);
+      if (drinkToDelete === undefined) {
+        const err = new Error("no such drink exists");
+        err.statusCode = 404;
+        next(err);
+      }
       const drinkIndex = drinks.findIndex(drink => drink._id.toString() === id);
 
       drinks.splice(drinkIndex, 1);
@@ -163,4 +168,5 @@ router.put("/:username/drinks/:id", async (req, res, next) => {
     next(err);
   }
 });
+
 module.exports = router;

@@ -148,7 +148,7 @@ describe("app", () => {
     });
   });
 
-  describe.only("user interaction", () => {
+  describe("user interaction", () => {
     it("GET /users/testuser2 should show welcome message", async () => {
       const login = await request(app)
         .post("/users/login")
@@ -235,6 +235,21 @@ describe("app", () => {
         .get("/users/testuser2/drinks")
         .set("Authorization", "Bearer " + login.body.token);
       expect(userDrinksAfterDeletion.body).toHaveLength(1);
+    });
+
+    it.only("DELETE /users/testuser2/drinks/id should return error if id does not exist", async () => {
+      const login = await request(app)
+        .post("/users/login")
+        .send({ username: "testuser2", password: "abcdefgh" })
+        .set("Content-Type", "application/json");
+      expect(login.status).toEqual(200);
+      expect(login.body.username).toEqual("testuser2");
+
+      const response = await request(app)
+        .delete("/users/testuser2/drinks/some-rubbish-id")
+        .set("Authorization", "Bearer " + login.body.token);
+
+      expect(response.status).toEqual(404);
     });
 
     it("PUT /users/testuser2/drinks/id should update drink", async () => {
