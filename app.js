@@ -1,17 +1,12 @@
 require("./db");
-const authenticateUser = require("./middleware/auth");
+const cors = require("cors");
 const express = require("express");
 const app = express();
-const drinksRouter = require("./routes/drinks.route");
 const usersRouter = require("./routes/users.route");
+app.use(cors());
 app.use(express.json());
-
 //public route
 app.use("/users", usersRouter);
-
-//private route
-// app.use("/drinks", authenticateUser, drinksRouter);
-// app.use("/user/drinks", authenticateUser, drinksRouter);
 
 app.use((err, req, res, next) => {
   if (err.statusCode) {
