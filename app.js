@@ -11,6 +11,7 @@ app.use("/users", usersRouter);
 
 //private route
 app.use("/drinks", authenticateUser, drinksRouter);
+// app.use("/user/drinks", authenticateUser, drinksRouter);
 
 app.use((err, req, res, next) => {
   if (err.statusCode) {

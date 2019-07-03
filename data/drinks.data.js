@@ -1,16 +1,18 @@
+const mongoose = require("mongoose");
+
 module.exports = [
   {
-    id: 1,
+    _v: 0,
     _id: "5d1a1d3eb555a81d301ce7a0",
     name: "Oolong Milk Tea",
-    topping: ["pudding"],
+    toppings: ["pudding"],
     price: 4.0,
     sugarLevel: 50,
     store: "Koi",
-    dateBought: new Date().toISOString()
+    dateBought: new Date().toISOString(),
+    _drinker: "5d1b6ff1a6d71b36ecda492c"
   },
   {
-    id: 2,
     _id: "5d1a1d3eb555a81d301ce7a1",
     name: "Brown Sugar Milk Tea",
     topping: [null],
@@ -20,17 +22,17 @@ module.exports = [
     dateBought: new Date().toISOString()
   },
   {
-    id: 3,
+    _v: 0,
     _id: "5d1a1d3eb555a81d301ce7a2",
     name: "Caramel Macchiato",
-    topping: [null],
+    toppings: [null],
     price: 4.0,
     sugarLevel: null,
     store: "Koi",
-    dateBought: new Date().toISOString()
+    dateBought: new Date().toISOString(),
+    _drinker: "5d1b6ff1a6d71b36ecda492c"
   },
   {
-    id: 4,
     _id: "5d1a1d3eb555a81d301ce7a3",
     name: "Earl Grey Milk Tea",
     topping: [null],
@@ -40,7 +42,6 @@ module.exports = [
     dateBought: new Date().toISOString()
   },
   {
-    id: 5,
     _id: "5d1a1d3eb555a81d301ce7a4",
     name: "Yakult Green Tea",
     topping: ["White Pearl"],

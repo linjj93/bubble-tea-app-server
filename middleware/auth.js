@@ -3,7 +3,7 @@ require("../models/user.model");
 const mongoose = require("mongoose");
 const UserModel = mongoose.model("user");
 
-authenticate = async (req, res, next) => {
+authenticateUser = async (req, res, next) => {
   if (!req.headers.authorization) {
     res.sendStatus(401);
   }
@@ -11,9 +11,12 @@ authenticate = async (req, res, next) => {
   let foundUser;
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     foundUser = await UserModel.findOne({
-      _id: decoded.sub
+      // id: decoded.sub
+      username: decoded.user
     });
+
     req.user = foundUser;
 
     next();
@@ -25,4 +28,4 @@ authenticate = async (req, res, next) => {
   }
 };
 
-module.exports = authenticate;
+module.exports = authenticateUser;

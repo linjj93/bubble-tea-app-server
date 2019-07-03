@@ -1,4 +1,3 @@
-const mockDrinkData = require("../data/drinks.data");
 const mockUserData = require("../data/users.data");
 const { MongoClient } = require("mongodb");
 const request = require("supertest");
@@ -31,9 +30,8 @@ describe("drinks", () => {
   });
 
   const mockDrink = {
-    id: 6,
     name: "Ovaltine",
-    topping: ["None"],
+    toppings: ["None"],
     price: 3.0,
     sugarLevel: 0,
     store: "Woobbee",
@@ -60,30 +58,25 @@ describe("drinks", () => {
 
   describe("/drinks", () => {
     it.only("GET /drinks should return all drinks", async () => {
-      const registration = await request(app)
-        .post("/users/register")
-        .send(mockUserData[1])
-        .set("Content-Type", "application/json");
-      expect(registration.body.message).toEqual(
-        `User ${mockUserData[1].username} created!`
-      );
+      const usersCollection = db.collection("users");
+      await usersCollection.insertMany(mockUserData);
+
       const login = await request(app)
         .post("/users/login")
         .send({
-          username: mockUserData[1].username,
-          password: mockUserData[1].password
+          username: "testuser2",
+          password: "abcdefgh"
         })
         .set("Content-Type", "application/json");
-      console.log(login.body);
-      expect(login.body.username).toEqual(mockUserData[1].username);
 
-      const drinksCollection = db.collection("drinks");
-      const usersCollection = db.collection("users");
-      await drinksCollection.insertMany(mockDrinkData);
-      // await usersCollection.insertMany(mockUserData);
+      expect(login.body.username).toEqual("testuser2");
 
-      const response = await request(app).get("/drinks");
-      expect(response.body).toMatchObject(mockDrinkData);
+      const response = await request(app)
+        .get("/drinks")
+        .set("Authorization", "Bearer " + login.body.token);
+
+      console.log(response.body);
+      expect(response.body).toHaveLength(2);
     });
 
     it("POST /drinks should add drink and return drink added", async () => {
