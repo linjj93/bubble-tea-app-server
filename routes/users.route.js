@@ -4,6 +4,7 @@ require("../db");
 const Joi = require("@hapi/joi");
 const express = require("express");
 const router = express.Router();
+
 const mongoose = require("mongoose");
 const UserModel = mongoose.model("user");
 
@@ -23,6 +24,7 @@ validateRegistration = user => {
 
 validateDrink = drink => {
   const schema = {
+    _id: Joi.string(),
     name: Joi.string().required(),
     toppings: Joi.array().items(Joi.string()),
     price: Joi.number().required(),
@@ -75,7 +77,7 @@ router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const foundUser = await UserModel.findOne({ username });
   if (foundUser === null) {
-    return res.status(400).json({ message: "User not found" });
+    return res.json({ message: "User not found" });
   }
   const isUser = await bcrypt.compare(password, foundUser.password);
   if (isUser) {
@@ -98,7 +100,11 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/:username", authenticateUser, async (req, res, next) => {
+router.post("/logout", async (req, res) => {
+  res.sendStatus(200);
+});
+
+router.get("/:username/home", authenticateUser, async (req, res, next) => {
   const { username } = req.params;
   const userData = await UserModel.findOne({ username }).catch(err =>
     next(err)
@@ -113,13 +119,25 @@ router.get("/:username/drinks", authenticateUser, async (req, res, next) => {
 });
 
 router.post("/:username/drinks", authenticateUser, async (req, res, next) => {
+  const validation = validateDrink(req.body);
+  if (validation.error) {
+    return res
+      .status(400)
+      .json({ message: validation.error.details[0].message });
+  }
+
   const { username } = req.params;
   const newDrink = req.body;
 
-  await UserModel.findOneAndUpdate(
-    { username },
-    { $push: { drinks: newDrink } }
-  );
+  try {
+    const user = await UserModel.findOne({ username });
+    const drinks = user.drinks;
+    drinks.push(newDrink);
+    await user.save();
+  } catch (err) {
+    next(err);
+  }
+
   res.status(201).json(newDrink);
 });
 

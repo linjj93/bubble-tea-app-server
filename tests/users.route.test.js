@@ -152,9 +152,9 @@ describe("app", () => {
     const token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZDFjNTVmY2I1MTVhYTIzM2M2ZmMwNjYiLCJpYXQiOjE1NjIxMzgxMjI3NTgsInVzZXIiOiJ0ZXN0dXNlcjIiLCJleHAiOjE1NjIxMzgxMzM1NTh9.IGAfl673YpcZqnmgeofLP456u-pNhSAfTXEWLblcCVI";
 
-    it("GET /users/testuser2 should show welcome message", async () => {
+    it("GET /users/testuser2/home should show welcome message", async () => {
       const response = await request(app)
-        .get("/users/testuser2")
+        .get("/users/testuser2/home")
         .set("Authorization", "Bearer " + token);
       expect(response.body.message).toEqual("Welcome, testuser2!");
     });
