@@ -10,7 +10,7 @@ app.use(express.json());
 app.use("/users", usersRouter);
 
 //private route
-app.use("/drinks", authenticateUser, drinksRouter);
+// app.use("/drinks", authenticateUser, drinksRouter);
 // app.use("/user/drinks", authenticateUser, drinksRouter);
 
 app.use((err, req, res, next) => {
