@@ -1,6 +1,8 @@
+const mongoose = require("mongoose");
+
 module.exports = [
   {
-    _id: "5d1b4feaf48ce21a44fc21bf",
+    _id: mongoose.Types.ObjectId("5d1b4feaf48ce21a44fc21bf"),
     username: "testuser1",
     password: "$2a$10$V9jAdHpMGu98iVUcXffe0OtCIs5zEKYoxaPu4yg3awEgznguLu/sO",
     drinks: [
@@ -16,7 +18,7 @@ module.exports = [
     ]
   },
   {
-    _id: "5d1b960c5a5c3105e83ed51e",
+    _id: mongoose.Types.ObjectId("5d1b960c5a5c3105e83ed51e"),
     username: "testuser2",
     password: "$2a$10$NrchS0idG1zU679unFfohuL4.VPjRMJse00LrKREWozH.kteRdXYW",
     drinks: [
