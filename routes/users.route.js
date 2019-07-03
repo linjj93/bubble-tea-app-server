@@ -1,9 +1,12 @@
 require("../models/user.model");
+require("../db");
+
 const Joi = require("@hapi/joi");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const UserModel = mongoose.model("user");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authenticateUser = require("../middleware/auth");
@@ -97,22 +100,27 @@ router.post("/login", async (req, res) => {
 
 router.get("/:username", authenticateUser, async (req, res, next) => {
   const { username } = req.params;
-  const userData = await UserModel.findOne({ username });
+  const userData = await UserModel.findOne({ username }).catch(err =>
+    next(err)
+  );
   res.status(200).json({ message: `Welcome, ${username}!` });
 });
 
 router.get("/:username/drinks", authenticateUser, async (req, res, next) => {
   const { username } = req.params;
-  const user = await UserModel.findOne({ username });
+  const user = await UserModel.findOne({ username }).catch(err => next(err));
   res.status(200).json(user.drinks);
 });
 
 router.post("/:username/drinks", authenticateUser, async (req, res, next) => {
   const { username } = req.params;
-  const user = await UserModel.findOne({ username });
   const newDrink = req.body;
-  user.drinks.push(newDrink);
-  res.status(200).json(newDrink);
+
+  await UserModel.findOneAndUpdate(
+    { username },
+    { $push: { drinks: newDrink } }
+  );
+  res.status(201).json(newDrink);
 });
 
 router.delete(
@@ -120,14 +128,39 @@ router.delete(
   authenticateUser,
   async (req, res, next) => {
     const { username, id } = req.params;
-    await UserModel.update({ username });
+    try {
+      const user = await UserModel.findOne({ username });
+      const drinks = user.drinks;
+      const drinkToDelete = drinks.find(drink => drink._id.toString() === id);
+      const drinkIndex = drinks.findIndex(drink => drink._id.toString() === id);
 
-    const user = await UserModel.findOne({ username });
-    let drinks = user.drinks;
-    const drinkToDelete = drinks.find(drink => drink._id.toString() === id);
-    drinks = drinks.splice(drinks.indexOf(drinkToDelete), 1);
+      drinks.splice(drinkIndex, 1);
 
-    res.status(200).json(drinkToDelete);
+      await user.save();
+      res.status(200).json(drinkToDelete);
+    } catch (err) {
+      next(err);
+    }
   }
 );
+
+router.put("/:username/drinks/:id", async (req, res, next) => {
+  const { username, id } = req.params;
+  const fieldsToUpdate = req.body;
+
+  try {
+    const user = await UserModel.findOne({ username });
+    const drinks = user.drinks;
+    const drinkIndex = drinks.findIndex(drink => drink._id.toString() === id);
+
+    for (let field in fieldsToUpdate) {
+      drinks[drinkIndex][field] = fieldsToUpdate[field];
+    }
+
+    await user.save();
+    res.status(200).json(drinks[drinkIndex]);
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = router;
