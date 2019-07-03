@@ -120,14 +120,14 @@ describe("app", () => {
     });
 
     it("POST /users/login should deny login if user is not registered", async () => {
-      const oldUser = {
+      const randomUser = {
         username: "testuser3",
         password: "password"
       };
 
       const response = await request(app)
         .post("/users/login")
-        .send(oldUser)
+        .send(randomUser)
         .set("Content-Type", "application/json");
       expect(response.status).toEqual(400);
       expect(response.body.message).toEqual("User not found");
