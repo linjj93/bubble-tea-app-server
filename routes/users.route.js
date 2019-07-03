@@ -133,9 +133,7 @@ router.delete(
       const drinks = user.drinks;
       const drinkToDelete = drinks.find(drink => drink._id.toString() === id);
       if (drinkToDelete === undefined) {
-        const err = new Error("no such drink exists");
-        err.statusCode = 404;
-        next(err);
+        return res.status(404).json({ message: "No such drink exists." });
       }
       const drinkIndex = drinks.findIndex(drink => drink._id.toString() === id);
 
@@ -157,6 +155,9 @@ router.put("/:username/drinks/:id", async (req, res, next) => {
     const user = await UserModel.findOne({ username });
     const drinks = user.drinks;
     const drinkIndex = drinks.findIndex(drink => drink._id.toString() === id);
+    if (drinks[drinkIndex] === undefined) {
+      return res.status(404).json({ message: "No such drink exists." });
+    }
 
     for (let field in fieldsToUpdate) {
       drinks[drinkIndex][field] = fieldsToUpdate[field];
