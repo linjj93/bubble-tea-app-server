@@ -14,10 +14,13 @@ const authenticateUser = require("../middleware/auth");
 
 validateRegistration = user => {
   const schema = {
-    username: Joi.string().required(),
+    username: Joi.string()
+      .alphanum()
+      .required(),
     password: Joi.string()
       .required()
-      .min(8)
+      .min(8),
+    passwordCfm: Joi.string().allow("")
   };
   return Joi.validate(user, schema);
 };
@@ -36,17 +39,23 @@ validateDrink = drink => {
 };
 
 router.post("/register", async (req, res, next) => {
+  const { username, password, passwordCfm } = req.body;
   const validation = validateRegistration(req.body);
   if (validation.error) {
-    let err = new Error(validation.error.details[0].message);
-    err.statusCode = 400;
-    return next(err);
+    return res
+      .status(400)
+      .json({ message: validation.error.details[0].message });
   }
-  const { username, password } = req.body;
+  if (password !== passwordCfm) {
+    return res.status(400).json({
+      message: "Password confirmation must be the same as password"
+    });
+  }
 
   const userExists = await UserModel.findOne({ username });
+
   if (userExists) {
-    res.status(400).json({ message: "User already exists" });
+    return res.status(400).json({ message: "User already exists" });
   } else {
     const saltRound = 10;
     const hash = await bcrypt.hash(password, saltRound);
@@ -67,17 +76,18 @@ router.post("/register", async (req, res, next) => {
       { expiresIn: "3h" }
     );
     res.status(200).json({
-      token,
-      message: `User ${username} created!`
+      token
     });
   }
 });
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  const foundUser = await UserModel.findOne({ username });
+  const foundUser = await UserModel.findOne({
+    username: username.trim()
+  });
   if (foundUser === null) {
-    return res.json({ message: "User not found" });
+    return res.status(400).json({ message: "Invalid credentials" });
   }
   const isUser = await bcrypt.compare(password, foundUser.password);
   if (isUser) {
@@ -92,11 +102,11 @@ router.post("/login", async (req, res) => {
     );
     res.status(200).json({
       _id: foundUser._id,
-      username,
+      username: username.trim(),
       token
     });
   } else {
-    res.status(401).json({ message: "Your password is incorrect" });
+    res.status(400).json({ message: "Invalid credentials" });
   }
 });
 
@@ -104,18 +114,19 @@ router.post("/logout", async (req, res) => {
   res.sendStatus(200);
 });
 
-router.get("/:username/home", authenticateUser, async (req, res, next) => {
+router.get("/:username/dashboard", authenticateUser, async (req, res, next) => {
   const { username } = req.params;
   const userData = await UserModel.findOne({ username }).catch(err =>
     next(err)
   );
-  res.status(200).json({ message: `Welcome, ${username}!` });
+
+  res.status(200).json({ message: `Welcome, ${username}!`, username });
 });
 
 router.get("/:username/drinks", authenticateUser, async (req, res, next) => {
   const { username } = req.params;
   const user = await UserModel.findOne({ username }).catch(err => next(err));
-  res.status(200).json(user.drinks);
+  res.status(200).json({ drinks: user.drinks });
 });
 
 router.post("/:username/drinks", authenticateUser, async (req, res, next) => {
@@ -134,11 +145,10 @@ router.post("/:username/drinks", authenticateUser, async (req, res, next) => {
     const drinks = user.drinks;
     drinks.push(newDrink);
     await user.save();
+    res.status(201).json({ drinkAdded: newDrink, drinksAfterAddition: drinks });
   } catch (err) {
     next(err);
   }
-
-  res.status(201).json(newDrink);
 });
 
 router.delete(
@@ -158,7 +168,7 @@ router.delete(
       drinks.splice(drinkIndex, 1);
 
       await user.save();
-      res.status(200).json(drinkToDelete);
+      res.status(200).json({ drinkDeleted: drinkToDelete, drinksLeft: drinks });
     } catch (err) {
       next(err);
     }
