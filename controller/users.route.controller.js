@@ -25,10 +25,13 @@ validateRegistration = user => {
 validateDrink = drink => {
   const schema = {
     _id: Joi.string(),
-    name: Joi.string().required(),
+    drink: Joi.string().required(),
     toppings: Joi.array().items(Joi.string()),
     price: Joi.number().required(),
-    sugarLevel: Joi.number().required(),
+    sugarLevel: Joi.number()
+      .min(0)
+      .max(100)
+      .required(),
     store: Joi.string().required(),
     dateBought: Joi.date().required()
   };
@@ -79,7 +82,6 @@ registerUser = async (req, res, next) => {
 };
 
 userLogin = async (req, res) => {
-  console.log("hello user");
   const { username, password } = req.body;
   const foundUser = await UserModel.findOne({
     username: username.trim()
@@ -145,7 +147,8 @@ addDrink = async (req, res, next) => {
     await user.save();
     res.status(201).json({ drinkAdded: newDrink, drinksAfterAddition: drinks });
   } catch (err) {
-    next(err);
+    console.log("error");
+    return res.status(400).json({ message: err.message });
   }
 };
 
