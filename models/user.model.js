@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   drinks: [
     {
-      name: { type: String, required: true },
+      drink: { type: String, required: true },
       toppings: { type: [String], required: true },
       price: { type: Number, required: true },
       sugarLevel: { type: Number, required: true },

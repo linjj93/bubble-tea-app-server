@@ -8,7 +8,7 @@ module.exports = [
     drinks: [
       {
         _id: "5d1a1d3eb555a81d301ce7a4",
-        name: "Yakult Green Tea",
+        drink: "Yakult Green Tea",
         topping: ["White Pearl"],
         price: 4.2,
         sugarLevel: 25,
@@ -24,7 +24,7 @@ module.exports = [
     drinks: [
       {
         _id: "5d1a1d3eb555a81d301ce7a5",
-        name: "Oolong Milk Tea",
+        drink: "Oolong Milk Tea",
         toppings: ["Pearl"],
         price: 3.4,
         sugarLevel: 50,
@@ -33,7 +33,7 @@ module.exports = [
       },
       {
         _id: "5d1a1d3eb555a81d301ce7a6",
-        name: "Ice Cream Milk Tea",
+        drink: "Ice Cream Milk Tea",
         toppings: ["None"],
         price: 4,
         sugarLevel: 50,
