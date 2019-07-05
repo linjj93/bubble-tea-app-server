@@ -4,8 +4,6 @@ require("../db");
 const express = require("express");
 const router = express.Router();
 
-const mongoose = require("mongoose");
-
 const authenticateUser = require("../middleware/auth");
 
 const Ctrl = require("../controller/users.route.controller");

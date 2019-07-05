@@ -5,7 +5,6 @@ const app = express();
 const usersRouter = require("./routes/users.route");
 app.use(cors());
 app.use(express.json());
-//public route
 app.use("/users", usersRouter);
 
 app.use((err, req, res, next) => {
