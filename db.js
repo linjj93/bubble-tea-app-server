@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 
 const dbURI =
-  "mongodb://jinjia:psd270718pmo@ds347367.mlab.com:47367/heroku_0s93gqpp";
-// ||
-// global.__MONGO_URI__ ||
-// "mongodb://localhost:27017/bbtapp";
+  process.env.MONGODB_URI ||
+  global.__MONGO_URI__ ||
+  "mongodb://localhost:27017/bbtapp";
 
 mongoose.connect(dbURI, {
   useCreateIndex: true,

@@ -22,6 +22,6 @@ router.post("/:username/drinks", authenticateUser, Ctrl.addDrink);
 
 router.delete("/:username/drinks/:id", authenticateUser, Ctrl.deleteDrink);
 
-router.put("/:username/drinks/:id", Ctrl.updateDrink);
+router.put("/:username/drinks/:id", authenticateUser, Ctrl.updateDrink);
 
 module.exports = router;

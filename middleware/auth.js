@@ -5,6 +5,7 @@ const UserModel = mongoose.model("user");
 
 authenticateUser = async (req, res, next) => {
   if (!req.headers.authorization) {
+    console.log("no header");
     res.sendStatus(401);
   }
   const token = req.headers.authorization.split(" ")[1];
@@ -21,6 +22,7 @@ authenticateUser = async (req, res, next) => {
 
     next();
   } catch (err) {
+    console.log(err.message);
     if (err.message === "invalid signature") {
       return res.status(400).json({ message: err.message });
     }

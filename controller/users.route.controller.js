@@ -191,7 +191,9 @@ updateDrink = async (req, res, next) => {
     }
 
     await user.save();
-    res.status(200).json(drinkToUpdate);
+    res
+      .status(200)
+      .json({ updatedDrink: drinkToUpdate, drinksAfterUpdate: drinks });
   } catch (err) {
     next(err);
   }
