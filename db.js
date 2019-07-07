@@ -1,13 +1,16 @@
 const mongoose = require("mongoose");
 
-const dbURI = process.env.MONGODB_URI || global.__MONGO_URI__ || "mongodb://localhost:27017/bbtapp";
+const dbURI = process.env.MONGODB_URI;
+// ||
+// global.__MONGO_URI__ ||
+// "mongodb://localhost:27017/bbtapp";
 
 mongoose.connect(dbURI, {
   useCreateIndex: true,
   useFindAndModify: false,
   useNewUrlParser: true,
   user: process.env.MONGODB_USERNAME,
-  pass: process.env.MONGODB_PASSWORD,
+  pass: process.env.MONGODB_PASSWORD
 });
 
 const db = mongoose.connection;
