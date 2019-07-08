@@ -4,18 +4,23 @@ const express = require("express");
 const app = express();
 const usersRouter = require("./routes/users.route");
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true
-  })
-);
+// app.options("*", cors());
 
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
+// app.use(
+//   cors({
+//     origin: "*",
+//     credentials: true
+//   })
+// );
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  next();
+});
 
 app.use(express.json());
 app.use("/users", usersRouter);
