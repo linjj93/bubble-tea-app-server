@@ -2,7 +2,7 @@ const usersData = require("../data/users.data");
 const { MongoClient } = require("mongodb");
 const request = require("supertest");
 const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config({ silent: process.env.NODE_ENV === "production" });
 require("../db");
 const app = require("../app");
 
@@ -169,7 +169,7 @@ describe("app", () => {
     it("POST /users/testuser2/drinks should add a drink and addition should persist", async () => {
       const mockDrink = {
         _id: "5d1a1d3eb555a81d301ce7a7",
-        name: "Ovaltine",
+        drink: "Ovaltine",
         toppings: ["None"],
         price: 3.0,
         sugarLevel: 0,
@@ -182,7 +182,6 @@ describe("app", () => {
         .send(mockDrink)
         .set("Content-Type", "application/json")
         .set("Authorization", "Bearer " + token);
-
       expect(response.status).toEqual(201);
       expect(response.body.drinkAdded).toMatchObject(mockDrink);
 
@@ -235,8 +234,7 @@ describe("app", () => {
         .send(fieldsToUpdate)
         .set("Content-Type", "application/json")
         .set("Authorization", "Bearer " + token);
-
-      expect(update.body.price).toEqual(fieldsToUpdate.price);
+      expect(update.body.updatedDrink.price).toEqual(fieldsToUpdate.price);
       expect(update.status).toEqual(200);
     });
 
