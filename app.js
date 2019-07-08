@@ -4,7 +4,12 @@ const express = require("express");
 const app = express();
 const usersRouter = require("./routes/users.route");
 
-app.options("*", cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true
+  })
+);
 
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
