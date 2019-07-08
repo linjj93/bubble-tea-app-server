@@ -9,8 +9,7 @@ mongoose.connect(dbURI, {
   useCreateIndex: true,
   useFindAndModify: false,
   useNewUrlParser: true,
-  user: process.env.MONGODB_USERNAME,
-  pass: process.env.MONGODB_PASSWORD
+
 });
 
 const db = mongoose.connection;
