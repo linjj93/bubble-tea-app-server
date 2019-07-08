@@ -14,6 +14,7 @@ const usersRouter = require("./routes/users.route");
 // );
 
 // app.use(cors());
+app.use(express.json());
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -24,7 +25,6 @@ app.use(function(req, res, next) {
   );
   next();
 });
-app.use(express.json());
 app.use("/users", usersRouter);
 
 app.use((err, req, res, next) => {
