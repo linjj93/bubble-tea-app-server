@@ -87,7 +87,7 @@ userLogin = async (req, res) => {
     username: username.trim()
   });
   if (foundUser === null) {
-    return res.status(400).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "Invalid credentials" });
   }
   const isUser = await bcrypt.compare(password, foundUser.password);
   if (isUser) {
@@ -106,7 +106,7 @@ userLogin = async (req, res) => {
       token
     });
   } else {
-    res.status(400).json({ message: "Invalid credentials" });
+    res.status(401).json({ message: "Invalid credentials" });
   }
 };
 

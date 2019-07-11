@@ -142,7 +142,7 @@ describe("app", () => {
         .post("/users/login")
         .send(oldUser)
         .set("Content-Type", "application/json");
-      // expect(response.status).toEqual(401);
+      expect(response.status).toEqual(401);
       expect(response.body.message).toEqual("Invalid credentials");
     });
   });
