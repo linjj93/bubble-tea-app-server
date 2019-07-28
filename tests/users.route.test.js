@@ -145,6 +145,16 @@ describe("app", () => {
       expect(response.status).toEqual(401);
       expect(response.body.message).toEqual("Invalid credentials");
     });
+
+    it("GET /users/testuser2/userprofile should return username if successful", async () => {
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZDFjNTVmY2I1MTVhYTIzM2M2ZmMwNjYiLCJpYXQiOjE1NjIxMzgxMjI3NTgsInVzZXIiOiJ0ZXN0dXNlcjIiLCJleHAiOjE1NjIxMzgxMzM1NTh9.IGAfl673YpcZqnmgeofLP456u-pNhSAfTXEWLblcCVI";
+      const response = await request(app)
+        .get("/users/userprofile")
+        .set("Authorization", "Bearer " + token);
+      expect(response.status).toBe(200);
+      expect(response.body.username).toBe("testuser2");
+    });
   });
 
   describe("user interaction", () => {

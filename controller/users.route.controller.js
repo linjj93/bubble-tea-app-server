@@ -103,11 +103,16 @@ userLogin = async (req, res) => {
     res.status(200).json({
       _id: foundUser._id,
       username: username.trim(),
+      message: "Login successful",
       token
     });
   } else {
     res.status(401).json({ message: "Invalid credentials" });
   }
+};
+
+getUserProfile = (req, res) => {
+  res.status(200).json({ username: req.user.username });
 };
 
 userLogout = async (req, res) => {
@@ -132,6 +137,7 @@ populateDrinks = async (req, res, next) => {
 addDrink = async (req, res, next) => {
   const validation = validateDrink(req.body);
   if (validation.error) {
+    console.log(validation.error.details[0].message);
     return res
       .status(400)
       .json({ message: validation.error.details[0].message });
@@ -203,6 +209,7 @@ module.exports = {
   registerUser,
   userLogin,
   userLogout,
+  getUserProfile,
   accessDashboard,
   populateDrinks,
   addDrink,

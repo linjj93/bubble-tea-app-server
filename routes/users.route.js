@@ -24,4 +24,6 @@ router.delete("/:username/drinks/:id", authenticateUser, Ctrl.deleteDrink);
 
 router.put("/:username/drinks/:id", authenticateUser, Ctrl.updateDrink);
 
+router.get("/userprofile", authenticateUser, Ctrl.getUserProfile);
+
 module.exports = router;
